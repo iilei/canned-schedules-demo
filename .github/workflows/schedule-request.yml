@@ -1,0 +1,55 @@
+name: schedule request
+
+# Checks a schedule request issue and keeps one comment on it up to date: the report, and for a valid request the
+# text form inline and links to the SVG week and the other files, uploaded as workflow artifacts (GitHub strips inline
+# SVG, and bots can't attach files to issues). The canned-schedules-companion action does the work; the same check runs
+# locally with `mise run schedule:check body.md`. The workflow never writes to the repository.
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: schedule-request-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    # The issue template sets this label (.github/ISSUE_TEMPLATE/canned_schedule_request.md).
+    if: contains(github.event.issue.labels.*.name, 'Schedule')
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    # Job permissions replace the workflow's, so contents: read is repeated for the checkout.
+    permissions:
+      contents: read
+      issues: write # Posts, updates or deletes the bot's own comment.
+    steps:
+      # Actions are pinned to commit SHAs; the comment names the release.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The body is untrusted input: it reaches the shell only through an environment variable and a file, never
+      # through ${{ }} inside the script. Written exactly, without an added newline.
+      - name: Write the issue body to a file
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: printf '%s' "$BODY" > "$RUNNER_TEMP/request.md"
+
+      # The same flags as the schedule:* tasks.
+      - id: flags
+        name: Read canned-schedules.args
+        run: |
+          delimiter=$(openssl rand -hex 16)
+          {
+            printf 'args<<%s\n' "$delimiter"
+            cat canned-schedules.args
+            printf '\n%s\n' "$delimiter"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: iilei/canned-schedules-companion@8b89802c579ae688efc3a051c0aea91cd7878329 # v0.1.1
+        with:
+          body-file: ${{ runner.temp }}/request.md
+          args: ${{ steps.flags.outputs.args }}

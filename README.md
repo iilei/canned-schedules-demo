@@ -1,6 +1,6 @@
 # Canned schedules demo
 
-A working copy of the [canned-schedules consumer example](https://github.com/iilei/canned-schedules/tree/master/examples/consumer). [Open a schedule request](../../issues/new?template=canned_schedule_request.md) and the [companion action](https://github.com/iilei/canned-schedules-companion) checks it and keeps one comment on the issue up to date.
+A working copy of the [canned-schedules consumer example](https://github.com/iilei/canned-schedules/tree/master/examples/consumer). [Open a schedule request](../../issues/new/choose) and the [companion action](https://github.com/iilei/canned-schedules-companion) checks it and keeps one comment on the issue up to date.
 
 ## Canned schedules in your repo
 
@@ -8,15 +8,15 @@ A ready-to-copy setup for a repo that keeps approved schedules as `*.canned-sche
 requests that arrive as issues. Everything runs through [mise](https://mise.jdx.dev) tasks, so CI and your machine use
 the same commands.
 
-| File                                                | What it does                                                         |
-| --------------------------------------------------- | -------------------------------------------------------------------- |
-| `mise.toml`                                         | Pins the canned-schedules release and defines the `schedule:*` tasks |
-| `scripts/canned-schedule`                           | The tasks themselves (POSIX `sh`); runs without mise too             |
-| `canned-schedules.args`                             | Flags for every call, one per line                                   |
-| `.gitignore`                                        | Keeps the generated files out of git                                 |
-| `schedules/office-hours.canned-schedule.md`         | An example schedule (the issue template's example)                   |
-| `.github/ISSUE_TEMPLATE/canned_schedule_request.md` | The issue template people propose schedules with                     |
-| `.github/workflows/schedule-request.yml`            | Checks request issues and keeps one comment with the result          |
+| File                                          | What it does                                                         |
+| --------------------------------------------- | -------------------------------------------------------------------- |
+| `mise.toml`                                   | Pins the canned-schedules release and defines the `schedule:*` tasks |
+| `scripts/canned-schedule`                     | The tasks themselves (POSIX `sh`); runs without mise too             |
+| `canned-schedules.args`                       | Flags for every call, one per line                                   |
+| `.gitignore`                                  | Keeps the generated files out of git                                 |
+| `schedules/office-hours.canned-schedule.md`   | An example schedule (the office hours template's example)            |
+| `.github/ISSUE_TEMPLATE/canned_schedule_*.md` | The three issue templates people propose schedules with              |
+| `.github/workflows/schedule-request.yml`      | Checks request issues and keeps one comment with the result          |
 
 ## Set up
 

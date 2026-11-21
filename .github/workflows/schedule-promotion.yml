@@ -1,0 +1,41 @@
+name: schedule promotion
+
+# Promotes an approved issue to the catalog: adding the label "Schedule approved" to an issue that proposes a schedule
+# opens one pull request that adds the issue's text as schedules/<file name of its title> and closes the issue. An
+# issue without a valid schedule gets the label taken back. Setting labels takes the Triage role, so that is who
+# approves. Needs Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests".
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: schedule-promotion-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    if: github.event.label.name == 'Schedule approved'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: write # Pushes the branch.
+      pull-requests: write # Opens the pull request.
+      issues: write # Takes the label back when the schedule has errors.
+    steps:
+      # The default branch, for canned-schedules.args.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The body is untrusted input: it reaches the shell only through an environment variable and a file.
+      - name: Write the issue body to a file
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: printf '%s' "$BODY" > "$RUNNER_TEMP/issue.md"
+
+      - uses: iilei/canned-schedules-companion/promote@bbbc63d29654db02af538f94b90694ba25ea6dc5 # v0.3.4
+        with:
+          body-file: ${{ runner.temp }}/issue.md

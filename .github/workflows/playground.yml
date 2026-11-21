@@ -25,8 +25,7 @@ jobs:
         with:
           persist-credentials: false
 
-      # Testing an unreleased version of the action (branch feat/github-playground); pin to a release once it's out.
-      - uses: iilei/canned-schedules-companion/playground@e895541a2ea583450c493a219ed9e05d1475e700
+      - uses: iilei/canned-schedules-companion/playground@adf82c853cf35b45d545a807f3592e8d4f206f2e # v0.3.3
         with:
           name: canned-schedules demo
 

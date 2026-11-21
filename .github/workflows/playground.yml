@@ -1,0 +1,45 @@
+name: playground
+
+# Publishes the catalog's playground on GitHub Pages: the canned-schedules page set up for this repository, so a valid
+# schedule goes from the editor straight to a pull request. Runs on every push to main, so the playground knows the
+# catalog's schedules as they are after each merge.
+# One-time setup: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: playground
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Testing an unreleased version of the action (branch feat/github-playground); pin to a release once it's out.
+      - uses: iilei/canned-schedules-companion/playground@e895541a2ea583450c493a219ed9e05d1475e700
+        with:
+          name: canned-schedules demo
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

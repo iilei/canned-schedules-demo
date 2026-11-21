@@ -1,11 +1,11 @@
 # Canned schedules demo
 
-A working copy of the [canned-schedules consumer example](https://github.com/iilei/canned-schedules/tree/master/examples/consumer). [Open a schedule request](../../issues/new/choose) and the [companion action](https://github.com/iilei/canned-schedules-companion) checks it and keeps one comment on the issue up to date.
+A working copy of the [canned-schedules consumer example](https://github.com/iilei/canned-schedules/tree/master/examples/consumer). [Propose a schedule](../../issues/new/choose) and the [companion action](https://github.com/iilei/canned-schedules-companion) checks it and keeps one comment on the issue up to date.
 
 ## Canned schedules in your repo
 
-A ready-to-copy setup for a repo that keeps approved schedules as `*.canned-schedule.md` files and checks schedule
-requests that arrive as issues. Everything runs through [mise](https://mise.jdx.dev) tasks, so CI and your machine use
+A ready-to-copy setup for a schedule catalog: a repo that keeps approved schedules as `*.canned-schedule.md` files and
+checks schedules proposed in issues. Everything runs through [mise](https://mise.jdx.dev) tasks, so CI and your machine use
 the same commands.
 
 | File                                          | What it does                                                         |
@@ -16,7 +16,7 @@ the same commands.
 | `.gitignore`                                  | Keeps the generated files out of git                                 |
 | `schedules/office-hours.canned-schedule.md`   | An example schedule (the office hours template's example)            |
 | `.github/ISSUE_TEMPLATE/canned_schedule_*.md` | The three issue templates people propose schedules with              |
-| `.github/workflows/schedule-request.yml`      | Checks request issues and keeps one comment with the result          |
+| `.github/workflows/schedule-request.yml`      | Checks proposal issues and keeps one comment with the result         |
 
 ## Set up
 
@@ -28,12 +28,12 @@ the same commands.
 ## Tasks
 
 - `mise run schedule:render [file...]`: renders every schedule git doesn't ignore (or the given files) into
-  `.canned-schedule.json` (the canonical output), `.canned-schedule.svg` (the preview, with the request embedded) and
-  `.canned-schedule.txt` (the text form: the canonical request with the ASCII preview). It prints the text form, in
+  `.canned-schedule.json` (the canonical output), `.canned-schedule.svg` (the preview, with the schedule embedded) and
+  `.canned-schedule.txt` (the text form: the canonical schedule with the ASCII preview). It prints the text form, in
   colour on a terminal, reports every broken file before it fails, and deletes outputs that would otherwise be stale:
   those of a file that failed, and those whose source is gone. Files git tracks are never deleted.
-- `mise run schedule:check <file> [out-dir]`: checks one request, for example an issue body, and writes
-  `report.md`, `report.json`, `comment.md` and, for a valid request, `schedule.json`, `schedule.txt` and
+- `mise run schedule:check <file> [out-dir]`: checks one proposal, for example an issue body, and writes
+  `report.md`, `report.json`, `comment.md` and, for a valid schedule, `schedule.json`, `schedule.txt` and
   `schedule.svg` into `out-dir` (default `canned-schedule-report`, gitignored). `comment.md` is the comment the
   workflow posts, without the links to the uploaded files.
 - `mise run schedule:pre-commit`: checks the staged content of every staged schedule, not the working tree, and names
@@ -44,9 +44,9 @@ None of the tasks talks to GitHub or GitLab. The workflow posts the comment; the
 ## The issue comment
 
 The workflow runs the [canned-schedules-companion](https://github.com/iilei/canned-schedules-companion) action. It
-keeps one comment per request issue, found by its first line `<!-- canned-schedules:issue-preview -->`
+keeps one comment per proposal issue, found by its first line `<!-- canned-schedules:issue-preview -->`
 and its author (`github-actions[bot]`), and edits it on every change of the issue. It shows the report and, for a
-valid request, the text form. GitHub doesn't show SVG in comments, so the SVG week goes into a workflow artifact the
+valid schedule, the text form. GitHub doesn't show SVG in comments, so the SVG week goes into a workflow artifact the
 comment links to, next to a zip with every file the check wrote. Downloading needs a GitHub login with read access;
 the artifacts are kept for 30 days, and the next edit of the issue makes new ones. The workflow needs only
 `contents: read` and `issues: write` and never writes to the repository.

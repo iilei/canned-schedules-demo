@@ -1,6 +1,6 @@
-name: schedule request
+name: schedule proposal
 
-# Checks a schedule request issue and keeps one comment on it up to date: the report, and for a valid request the
+# Checks an issue that proposes a schedule and keeps one comment on it up to date: the report, and for a valid schedule the
 # text form inline and links to the SVG week and the other files, uploaded as workflow artifacts (GitHub strips inline
 # SVG, and bots can't attach files to issues). The canned-schedules-companion action does the work; the same check runs
 # locally with `mise run schedule:check body.md`. The workflow never writes to the repository.
@@ -50,7 +50,7 @@ jobs:
             printf '\n%s\n' "$delimiter"
           } >> "$GITHUB_OUTPUT"
 
-      - uses: iilei/canned-schedules-companion@7755130ba6a349f1eb102e76ac6ae186b33bd159 # v0.2.0
+      - uses: iilei/canned-schedules-companion@906182f426dbb4f4531dbdb6a99b53360fc9268f # v0.3.1
         with:
           body-file: ${{ runner.temp }}/request.md
           args: ${{ steps.flags.outputs.args }}

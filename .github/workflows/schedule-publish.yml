@@ -1,0 +1,42 @@
+name: schedule publish
+
+# Publishes what a merged pull request changed in the catalog: every changed schedule rendered from the file as merged,
+# with its provenance and metadata, tied to the pull request's review by digest. A schedule the review didn't vouch
+# for is still published, marked reviewed: false, and the pull request gets a note. The demo keeps the output as a
+# workflow artifact; a real catalog's post-fetch script uploads it (to S3, Artifactory, …).
+on:
+  push:
+    branches: [main]
+    paths:
+      - schedules/*.canned-schedule.md
+
+permissions:
+  contents: read
+
+concurrency:
+  group: schedule-publish
+
+jobs:
+  publish:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    # Job permissions replace the workflow's, so contents: read is repeated for the checkout.
+    permissions:
+      contents: read
+      pull-requests: read # Which pull request the pushed commit came from.
+      issues: write # The note goes through the issues API.
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # The diff needs the commit before the push.
+          persist-credentials: false
+
+      - id: publish
+        uses: iilei/canned-schedules-companion/publish@fbd4a29924a636a7cb907670bfd5b231a7630229 # v0.3.5
+        with:
+          post-fetch-script: scripts/publish-summary.sh
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: published-schedules
+          path: ${{ steps.publish.outputs.out-dir }}

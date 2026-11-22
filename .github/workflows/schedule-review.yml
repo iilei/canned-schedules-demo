@@ -31,4 +31,4 @@ jobs:
           fetch-depth: 0 # The diff needs the base commit.
           persist-credentials: false
 
-      - uses: iilei/canned-schedules-companion/review@bbbc63d29654db02af538f94b90694ba25ea6dc5 # v0.3.4
+      - uses: iilei/canned-schedules-companion/review@fbd4a29924a636a7cb907670bfd5b231a7630229 # v0.3.5

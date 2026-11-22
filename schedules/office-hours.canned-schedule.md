@@ -8,7 +8,7 @@
 > [!SCHEDULE-BASE] Off
 
 > [!SCHEDULE-STATE] Medium
-> - `08:00` to `18:00` MON-FRI
+> - `08:00` to `19:00` MON-FRI
 
 ## Why this schedule
 

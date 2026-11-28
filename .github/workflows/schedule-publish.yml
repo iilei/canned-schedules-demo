@@ -23,8 +23,7 @@ jobs:
     # Job permissions replace the workflow's, so contents: read is repeated for the checkout.
     permissions:
       contents: read
-      pull-requests: read # Which pull request the pushed commit came from.
-      issues: write # The note goes through the issues API.
+      pull-requests: write # Which pull request the pushed commit came from, and the note.
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
